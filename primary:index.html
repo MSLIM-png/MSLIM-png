@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Breach</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #000;
+    color: #00ff41;
+    font-family: monospace;
+    overflow: hidden;
+}
+
+.scanlines {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.03) 0px,
+        rgba(255,255,255,0.03) 1px,
+        transparent 2px,
+        transparent 4px
+    );
+    z-index: 10;
+}
+
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.warning {
+    color: #ff003c;
+    font-size: clamp(35px, 8vw, 90px);
+    font-weight: bold;
+    text-shadow:
+        0 0 10px #ff003c,
+        0 0 30px #ff003c;
+    animation: glitch .12s infinite;
+    text-align: center;
+}
+
+.sub {
+    margin-top: 15px;
+    color: #fff;
+    font-size: clamp(16px, 3vw, 25px);
+    text-align: center;
+}
+
+.terminal {
+    margin-top: 35px;
+    width: min(700px, 95%);
+    border: 1px solid #00ff41;
+    padding: 20px;
+    background: rgba(0,255,65,.03);
+    box-shadow: 0 0 25px rgba(0,255,65,.15);
+}
+
+.line {
+    margin: 8px 0;
+}
+
+.red {
+    color: #ff003c;
+}
+
+.cursor {
+    display: inline-block;
+    width: 9px;
+    height: 18px;
+    background: #00ff41;
+    animation: blink .6s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    25% { transform: translate(3px,-2px); }
+    50% { transform: translate(-3px,2px); }
+    75% { transform: translate(2px,1px); }
+    100% { transform: translate(0); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="scanlines"></div>
+
+<div class="container">
+
+    <div class="warning">
+        ⚠ SYSTEM BREACHED ⚠
+    </div>
+
+    <div class="sub">
+        تم اختراق النظام بالكامل😈
+    </div>
+
+    <div class="terminal" id="terminal"></div>
+
+</div>
+
+<script>
+const messages = [
+    "[+] Initializing connection...",
+    "[+] Bypassing security layer...",
+    "[+] Access granted.",
+    "[+] Scanning system...",
+    "[!] Firewall compromised.",
+    "[!] Security protocols disabled.",
+    "[+] Extracting system information...",
+    "[+] Connection established.",
+    "",
+    ">>> YOU HAVE BEEN HACKED <<<"
+];
+
+const terminal = document.getElementById("terminal");
+let i = 0;
+
+function addLine() {
+    if (i >= messages.length) {
+        terminal.innerHTML += '<span class="cursor"></span>';
+        return;
+    }
+
+    const line = document.createElement("div");
+    line.className = "line";
+
+    if (messages[i].includes("[!]") ||
+        messages[i].includes("HACKED")) {
+        line.classList.add("red");
+    }
+
+    line.textContent = messages[i];
+    terminal.appendChild(line);
+
+    i++;
+    setTimeout(addLine, 500);
+}
+
+addLine();
+</script>
+
+</body>
+</html>
