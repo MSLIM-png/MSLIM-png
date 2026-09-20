@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MSLIM Chat</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;width:100%;min-height:100%}
+body{background:radial-gradient(circle at top right,#10253d 0,#080b12 42%,#05070b 100%);color:#fff;font-family:Arial,sans-serif;min-height:100vh}
+button,input,select{font-family:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.app{width:100%;max-width:760px;min-height:100vh;margin:auto;position:relative;background:linear-gradient(180deg,rgba(12,18,29,.96),rgba(5,8,13,.98));box-shadow:0 0 60px rgba(0,170,255,.08)}
+.header{position:sticky;top:0;z-index:20;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;background:rgba(10,16,25,.92);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07)}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:43px;height:43px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:linear-gradient(135deg,#00aaff,#006eff);color:#00111c;font-weight:900;font-size:18px;box-shadow:0 8px 25px rgba(0,170,255,.25)}
+.brand-title{font-size:19px;font-weight:900}
+.brand-sub{color:#78879b;font-size:11px;margin-top:3px}
+.owner-top{color:#ffd84d;font-size:12px;font-weight:bold}
+.login-wrap{padding:35px 20px}
+.login-card{padding:26px 20px;border-radius:24px;background:linear-gradient(145deg,rgba(19,29,43,.98),rgba(10,15,24,.98));border:1px solid rgba(255,255,255,.07);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.login-title{margin:0 0 7px;font-size:27px}
+.login-desc{color:#8290a3;font-size:13px;margin-bottom:25px}
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tab{flex:1;padding:10px;text-align:center;border-radius:11px;background:#101b28;border:1px solid #273548;color:#8290a3;font-weight:bold;font-size:13px;cursor:pointer;transition:.2s}
+.tab.active{background:linear-gradient(135deg,#00b7ff,#0077ff);color:#00101a;border-color:transparent}
+.field{margin-top:14px}
+.field label{display:block;margin-bottom:7px;color:#9aa8ba;font-size:12px}
+input,select{width:100%;border:1px solid #273548;outline:none;background:#111b29;color:white;padding:14px;border-radius:13px;font-size:15px;transition:.2s}
+input:focus,select:focus{border-color:#00aaff;box-shadow:0 0 0 3px rgba(0,170,255,.10)}
+.main-btn{width:100%;border:0;padding:14px;margin-top:20px;border-radius:13px;background:linear-gradient(135deg,#00b7ff,#0077ff);color:#00101a;font-weight:900;font-size:15px;box-shadow:0 10px 25px rgba(0,145,255,.20)}
+.main-btn:disabled{opacity:.5;cursor:not-allowed}
+#error{color:#ff5d6c;font-size:13px;min-height:20px;margin-top:12px}
+.status{color:#5b8dff;font-size:11px;margin-top:8px;text-align:center}
+.user-bar{margin:14px;padding:13px 15px;border-radius:17px;background:#101a28;border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between}
+.user-name{font-weight:900;color:white}
+.user-id{color:#66768c;font-size:10px;margin-top:4px;overflow:hidden;text-overflow:ellipsis}
+.role{display:inline-block;margin-right:7px;padding:4px 7px;border-radius:7px;font-size:10px;font-weight:bold}
+.role-owner{color:#171100;background:#ffd84d}
+.role-user{color:#00131c;background:#00aaff}
+.logout-btn{border:0;padding:9px 13px;border-radius:10px;background:#2a1517;color:#ff5d6c;font-size:12px;font-weight:bold}
+.chat{padding:5px 14px 105px}
+.empty{text-align:center;color:#65758a;padding:60px 20px}
+.message{margin-bottom:15px;animation:messageIn .2s ease}
+@keyframes messageIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.message-meta{display:flex;align-items:center;gap:7px;margin:0 8px 6px;flex-wrap:wrap}
+.sender{color:#00b7ff;font-weight:900;font-size:13px}
+.sender.owner{color:#ffd84d}
+.badge{padding:3px 7px;border-radius:6px;font-size:9px;font-weight:bold}
+.badge-owner{background:rgba(255,216,77,.15);color:#ffd84d;border:1px solid rgba(255,216,77,.2)}
+.badge-user{background:rgba(0,170,255,.12);color:#00b7ff;border:1px solid rgba(0,170,255,.18)}
+.sender-id{color:#56667b;font-size:9px}
+.bubble{display:inline-block;max-width:88%;padding:12px 15px;border-radius:6px 17px 17px 17px;background:#121e2d;border:1px solid rgba(255,255,255,.05);color:#eaf1f8;line-height:1.55;word-break:break-word}
+.message.owner-message .bubble{background:linear-gradient(135deg,#17283a,#102031);border-color:rgba(255,216,77,.13)}
+.message-time{color:#536276;font-size:9px;margin-right:8px;margin-top:4px}
+.owner-panel{margin:14px;padding:17px;border-radius:19px;background:linear-gradient(145deg,#211d12,#12140f);border:1px solid rgba(255,216,77,.13)}
+.owner-title{color:#ffd84d;font-weight:900;margin-bottom:12px}
+.kick-btn{width:100%;margin-top:9px;padding:12px;border:0;border-radius:11px;background:#8d2731;color:white;font-weight:bold}
+.owner-result{font-size:11px;margin-top:9px;color:#9ba7b7}
+.send-area{position:fixed;bottom:0;width:100%;max-width:760px;padding:10px 12px;background:rgba(7,12,19,.93);backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.07);display:flex;gap:8px;z-index:30}
+.send-input{margin:0;flex:1;min-width:0;border-radius:14px}
+.send-btn{width:58px;margin:0;border:0;border-radius:14px;background:#00aaff;color:#00101a;font-size:20px;font-weight:bold}
+@media(max-width:500px){.header{padding:13px}.login-wrap{padding:20px 13px}.login-card{border-radius:20px}.chat{padding-left:9px;padding-right:9px}.bubble{max-width:94%}}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<header class="header">
+<div class="brand">
+<div class="logo">M</div>
+<div>
+<div class="brand-title">MSLIM Chat</div>
+<div class="brand-sub">مجتمع الدردشة</div>
+</div>
+</div>
+<div class="owner-top">👑 المالك: MSLIM</div>
+</header>
+
+<div id="registerBox" class="login-wrap">
+<div class="login-card">
+<div class="tabs">
+<div id="tabLogin" class="tab" onclick="switchTab('login')">تسجيل الدخول</div>
+<div id="tabRegister" class="tab active" onclick="switchTab('register')">حساب جديد</div>
+</div>
+<h1 id="formTitle" class="login-title">مرحباً بك</h1>
+<div id="formDesc" class="login-desc">أنشئ حسابك للدخول إلى الكروب</div>
+
+<div class="field">
+<label>اسم المستخدم</label>
+<input id="username" type="text" maxlength="20" placeholder="اكتب اليوزر" autocomplete="off">
+</div>
+
+<div id="ageField" class="field">
+<label>العمر</label>
+<input id="age" type="number" min="1" max="120" placeholder="العمر">
+</div>
+
+<div id="genderField" class="field">
+<label>الجنس</label>
+<select id="gender">
+<option value="">اختر الجنس</option>
+<option value="ذكر">ذكر</option>
+<option value="أنثى">أنثى</option>
+</select>
+</div>
+
+<div class="field">
+<label>كلمة المرور</label>
+<input id="password" type="password" placeholder="كلمة المرور" autocomplete="off">
+</div>
+
+<button id="mainBtn" class="main-btn" onclick="submitForm()">دخول إلى الكروب</button>
+<p id="error"></p>
+<div id="status" class="status"></div>
+</div>
+</div>
+
+<div id="chatBox" class="hidden">
+<div class="user-bar">
+<div>
+<div class="user-name">
+<span id="currentUser"></span>
+<span id="roleBadge" class="role"></span>
+</div>
+<div class="user-id" id="currentUserId"></div>
+</div>
+<button class="logout-btn" onclick="logout()">خروج</button>
+</div>
+
+<div id="ownerPanel" class="owner-panel hidden">
+<div class="owner-title">👑 صلاحيات المالك</div>
+<input id="kickTarget" type="text" placeholder="أدخل اسم أو ID العضو" autocomplete="off">
+<button class="kick-btn" onclick="kickUser()">🚫 طرد العضو</button>
+<div id="ownerResult" class="owner-result"></div>
+</div>
+
+<div id="messages" class="chat">
+<div class="empty">جارِ تحميل الرسائل...</div>
+</div>
+</div>
+
+<div id="sendArea" class="send-area hidden">
+<input id="messageInput" class="send-input" maxlength="500" placeholder="اكتب رسالتك..." onkeydown="if(event.key==='Enter'){sendMessage();}">
+<button class="send-btn" onclick="sendMessage()">➤</button>
+</div>
+
+</div>
+
+<script>
+/* =========================================================
+   ⚙️ إعدادات JSONBin
+   ========================================================= */
+const JSONBIN_USERS_ID    = "ضع_USERS_BIN_ID_هنا";
+const JSONBIN_MESSAGES_ID = "ضع_MESSAGES_BIN_ID_هنا";
+const JSONBIN_ACCESS_KEY  = "ضع_ACCESS_KEY_هنا";
+
+const JSONBIN_API = "https://api.jsonbin.io/v3/b";
+
+const JSONBIN_HEADERS = {
+    "Content-Type": "application/json",
+    "X-Access-Key": JSONBIN_ACCESS_KEY,
+    "X-Bin-Meta": "false"
+};
+
+/* =========================================================
+   State
+   ========================================================= */
+const SESSION_KEY = "mslim_session";
+let usersMap = {};
+let messagesArr = [];
+let currentUserData = null;
+let authMode = "register";
+
+/* =========================================================
+   Helpers
+   ========================================================= */
+function setStatus(t){ document.getElementById("status").textContent = t; }
+
+async function sha256(text){
+    const data = new TextEncoder().encode(text);
+    const hash = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(hash))
+        .map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+/* =========================================================
+   JSONBin
+   ========================================================= */
+async function readBin(binId){
+    try{
+        const res = await fetch(`${JSONBIN_API}/${binId}/latest`, {
+            headers: JSONBIN_HEADERS
+        });
+        if(!res.ok) throw new Error("read " + res.status);
+        const data = await res.json();
+        return data.record || data;
+    }catch(e){
+        console.warn("read error", e);
+        return null;
+    }
+}
+
+async function writeBin(binId, dataObj){
+    try{
+        const res = await fetch(`${JSONBIN_API}/${binId}`, {
+            method: "PUT",
+            headers: JSONBIN_HEADERS,
+            body: JSON.stringify(dataObj)
+        });
+        if(!res.ok){
+            const t = await res.text();
+            console.warn("write failed", res.status, t);
+            return false;
+        }
+        return true;
+    }catch(e){
+        console.warn("write error", e);
+        return false;
+    }
+}
+
+async function loadUsers(){
+    setStatus("⏳ تحميل الحسابات...");
+    const data = await readBin(JSONBIN_USERS_ID);
+    usersMap = data && typeof data === "object" ? data : {};
+    setStatus("✅ تم التحميل");
+    setTimeout(()=>setStatus(""), 1000);
+}
+
+async function loadMessages(){
+    const data = await readBin(JSONBIN_MESSAGES_ID);
+    messagesArr = Array.isArray(data) ? data : [];
+    displayMessages();
+}
+
+async function saveUsers(){
+    setStatus("⏳ حفظ...");
+    const ok = await writeBin(JSONBIN_USERS_ID, usersMap);
+    if(ok) setStatus("✅ تم الحفظ");
+    else setStatus("⚠️ فشل الحفظ");
+    setTimeout(()=>setStatus(""), 1500);
+}
+
+async function saveMessages(){
+    const ok = await writeBin(JSONBIN_MESSAGES_ID, messagesArr);
+    if(!ok) setStatus("⚠️ فشل حفظ الرسالة");
+}
+
+/* =========================================================
+   Tabs
+   ========================================================= */
+function switchTab(mode){
+    authMode = mode;
+    document.getElementById("tabLogin").classList.toggle("active", mode==="login");
+    document.getElementById("tabRegister").classList.toggle("active", mode==="register");
+    document.getElementById("formTitle").textContent = mode==="login" ? "تسجيل الدخول" : "مرحباً بك";
+    document.getElementById("formDesc").textContent = mode==="login" ? "أدخل بياناتك" : "أنشئ حسابك للدخول";
+    document.getElementById("ageField").classList.toggle("hidden", mode==="login");
+    document.getElementById("genderField").classList.toggle("hidden", mode==="login");
+    document.getElementById("mainBtn").textContent = mode==="login" ? "دخول" : "إنشاء الحساب";
+    document.getElementById("error").textContent = "";
+}
+
+function submitForm(){
+    if(authMode === "login") login();
+    else register();
+}
+
+/* =========================================================
+   Register
+   ========================================================= */
+async function register(){
+    const username = document.getElementById("username").value.trim();
+    const age = document.getElementById("age").value;
+    const gender = document.getElementById("gender").value;
+    const password = document.getElementById("password").value;
+    const errorEl = document.getElementById("error");
+    errorEl.textContent = "";
+
+    if(!username || !age || !gender || !password){
+        errorEl.textContent = "❌ أكمل جميع البيانات."; return;
+    }
+    if(username.length < 2 || username.length > 20){
+        errorEl.textContent = "❌ اليوزر بين 2 و20 حرف."; return;
+    }
+    if(password.length < 4){
+        errorEl.textContent = "❌ كلمة المرور 4 أحرف على الأقل."; return;
+    }
+
+    await loadUsers();
+
+    const normalized = username.toLowerCase();
+    const exists = Object.values(usersMap).some(
+        u => u.name && u.name.toLowerCase() === normalized
+    );
+    if(exists){
+        errorEl.textContent = "❌ هذا اليوزر مستخدم بالفعل.";
+        return;
+    }
+
+    const id = await sha256(normalized);
+    const passHash = await sha256(password);
+
+    const isOwner = normalized === "mslim";
+    const ownerExists = Object.values(usersMap).some(u => u.role === "owner");
+    if(isOwner && ownerExists){
+        errorEl.textContent = "❌ المالك مسجل مسبقاً.";
+        return;
+    }
+
+    const newUser = {
+        id,
+        name: isOwner ? "MSLIM" : username,
+        age: Number(age),
+        gender,
+        pass: passHash,
+        role: isOwner ? "owner" : "user",
+        createdAt: Date.now()
+    };
+
+    usersMap[id] = newUser;
+    await saveUsers();
+
+    currentUserData = newUser;
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ id, name: newUser.name }));
+    openChat();
+}
+
+/* =========================================================
+   Login
+   ========================================================= */
+async function login(){
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+    const errorEl = document.getElementById("error");
+    errorEl.textContent = "";
+
+    if(!username || !password){
+        errorEl.textContent = "❌ أدخل اليوزر وكلمة المرور."; return;
+    }
+
+    await loadUsers();
+
+    const normalized = username.toLowerCase();
+    const user = Object.values(usersMap).find(
+        u => u.name && u.name.toLowerCase() === normalized
+    );
+
+    if(!user){ errorEl.textContent = "❌ الحساب غير موجود."; return; }
+
+    const passHash = await sha256(password);
+    if(user.pass && user.pass !== passHash){
+        errorEl.textContent = "❌ كلمة المرور خاطئة."; return;
+    }
+
+    currentUserData = user;
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ id: user.id, name: user.name }));
+    openChat();
+}
+
+/* =========================================================
+   Chat
+   ========================================================= */
+async function openChat(){
+    document.getElementById("registerBox").classList.add("hidden");
+    document.getElementById("chatBox").classList.remove("hidden");
+    document.getElementById("sendArea").classList.remove("hidden");
+    document.getElementById("currentUser").textContent = currentUserData.name;
+
+    const badge = document.getElementById("roleBadge");
+    const idEl = document.getElementById("currentUserId");
+
+    if(currentUserData.role === "owner"){
+        badge.textContent = "👑 مالك"; badge.className = "role role-owner";
+        document.getElementById("ownerPanel").classList.remove("hidden");
+    }else{
+        badge.textContent = "عضو"; badge.className = "role role-user";
+        document.getElementById("ownerPanel").classList.add("hidden");
+    }
+    idEl.textContent = "ID: " + currentUserData.id;
+
+    await loadMessages();
+
+    if(window._timer) clearInterval(window._timer);
+    window._timer = setInterval(loadMessages, 8000);
+}
+
+function displayMessages(){
+    const box = document.getElementById("messages");
+    box.innerHTML = "";
+    if(!messagesArr.length){
+        box.innerHTML = '<div class="empty">لا توجد رسائل بعد.<br>كن أول من يكتب 👋</div>';
+        return;
+    }
+    [...messagesArr].sort((a,b)=>(a.ts||0)-(b.ts||0)).forEach(m => {
+        const w = document.createElement("div");
+        w.className = "message" + (m.role === "owner" ? " owner-message" : "");
+        const meta = document.createElement("div");
+        meta.className = "message-meta";
+        const s = document.createElement("span");
+        s.className = "sender" + (m.role === "owner" ? " owner" : "");
+        s.textContent = m.name;
+        const b = document.createElement("span");
+        b.className = "badge " + (m.role === "owner" ? "badge-owner" : "badge-user");
+        b.textContent = m.role === "owner" ? "👑 مالك" : "عضو";
+        const i = document.createElement("span");
+        i.className = "sender-id"; i.textContent = "ID: " + m.id;
+        meta.append(s, b, i);
+        const bubble = document.createElement("div");
+        bubble.className = "bubble"; bubble.textContent = m.text;
+        const t = document.createElement("div");
+        t.className = "message-time"; t.textContent = m.time;
+        w.append(meta, bubble, t);
+        box.appendChild(w);
+    });
+    box.scrollTop = box.scrollHeight;
+}
+
+async function sendMessage(){
+    if(!currentUserData) return;
+    const input = document.getElementById("messageInput");
+    const text = input.value.trim();
+    if(!text) return;
+
+    const now = new Date();
+    const msg = {
+        id: currentUserData.id,
+        name: currentUserData.name,
+        role: currentUserData.role,
+        text,
+        time: now.toLocaleTimeString("ar-IQ",{hour:"2-digit",minute:"2-digit"}),
+        ts: now.getTime()
+    };
+    messagesArr.push(msg);
+    input.value = "";
+    displayMessages();
+
+    await saveMessages();
+}
+
+function logout(){
+    currentUserData = null;
+    localStorage.removeItem(SESSION_KEY);
+    if(window._timer) clearInterval(window._timer);
+    document.getElementById("chatBox").classList.add("hidden");
+    document.getElementById("sendArea").classList.add("hidden");
+    document.getElementById("registerBox").classList.remove("hidden");
+    document.getElementById("password").value = "";
+    document.getElementById("username").value = "";
+    switchTab("login");
+}
+
+/* =========================================================
+   Kick
+   ========================================================= */
+async function kickUser(){
+    if(!currentUserData || currentUserData.role !== "owner") return;
+    const input = document.getElementById("kickTarget");
+    const result = document.getElementById("ownerResult");
+    const target = input.value.trim();
+    result.textContent = "";
+    if(!target){ result.textContent = "❌ أدخل الاسم أو ID"; return; }
+
+    await loadUsers();
+
+    const tLower = target.toLowerCase();
+    const found = Object.values(usersMap).find(u =>
+        (u.name && u.name.toLowerCase() === tLower) || u.id === target
+    );
+    if(!found){ result.textContent = "❌ العضو غير موجود"; return; }
+    if(found.role === "owner"){ result.textContent = "❌ لا يمكن طرد المالك"; return; }
+
+    delete usersMap[found.id];
+    await saveUsers();
+
+    await loadMessages();
+    messagesArr = messagesArr.filter(m => m.id !== found.id);
+    await saveMessages();
+
+    result.textContent = "✅ تم طرد " + found.name;
+    input.value = "";
+    displayMessages();
+}
+
+/* =========================================================
+   Start
+   ========================================================= */
+async function start(){
+    if(JSONBIN_USERS_ID.includes("__") || JSONBIN_ACCESS_KEY.includes("__")){
+        setStatus("⚠️ لم يتم وضع إعدادات JSONBin");
+        return;
+    }
+    await loadUsers();
+
+    const session = localStorage.getItem(SESSION_KEY);
+    if(session){
+        try{
+            const p = JSON.parse(session);
+            const u = usersMap[p.id];
+            if(u){ currentUserData = u; openChat(); return; }
+        }catch(e){}
+    }
+    if(Object.values(usersMap).some(u => u.role === "owner")) switchTab("login");
+}
+
+start();
+</script>
+
+</body>
+</html>
