@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>MSLIM Chat</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#080b12;
+    color:white;
+    font-family:Arial,sans-serif;
+}
+
+.container{
+    width:100%;
+    max-width:700px;
+    margin:auto;
+    min-height:100vh;
+}
+
+header{
+    padding:18px;
+    background:#111824;
+    border-bottom:1px solid #263244;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    color:#00aaff;
+    font-size:22px;
+    font-weight:bold;
+}
+
+.admin{
+    color:#ffd54a;
+}
+
+.card{
+    margin:20px;
+    padding:20px;
+    background:#111824;
+    border-radius:16px;
+}
+
+input,
+select,
+button{
+    width:100%;
+    padding:13px;
+    margin-top:10px;
+    border-radius:10px;
+    border:0;
+    font-size:16px;
+}
+
+input,
+select{
+    background:#202b3a;
+    color:white;
+}
+
+button{
+    background:#00aaff;
+    color:#001018;
+    font-weight:bold;
+}
+
+.hidden{
+    display:none;
+}
+
+#messages{
+    height:65vh;
+    overflow-y:auto;
+    padding:15px;
+}
+
+.message{
+    background:#151f2d;
+    padding:12px;
+    border-radius:12px;
+    margin-bottom:10px;
+}
+
+.message-name{
+    color:#00aaff;
+    font-weight:bold;
+}
+
+.message-admin{
+    color:#ffd54a;
+    font-weight:bold;
+}
+
+.message-time{
+    color:#718096;
+    font-size:11px;
+}
+
+.send{
+    display:flex;
+    gap:8px;
+    padding:10px;
+    background:#111824;
+}
+
+.send input{
+    margin:0;
+    flex:1;
+}
+
+.send button{
+    width:90px;
+    margin:0;
+}
+
+#error{
+    color:#ff5555;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+
+<div>
+
+<div class="logo">
+MSLIM CHAT
+</div>
+
+<small>
+كروب شات
+</small>
+
+</div>
+
+<div class="admin">
+👑 MSLIM
+</div>
+
+</header>
+
+
+<div id="registerBox" class="card">
+
+<h2>إنشاء حساب</h2>
+
+<input
+id="username"
+type="text"
+maxlength="20"
+placeholder="اسم المستخدم"
+>
+
+<input
+id="age"
+type="number"
+min="1"
+max="120"
+placeholder="العمر"
+>
+
+<select id="gender">
+
+<option value="">
+اختر الجنس
+</option>
+
+<option value="ذكر">
+ذكر
+</option>
+
+<option value="أنثى">
+أنثى
+</option>
+
+</select>
+
+<button onclick="register()">
+دخول
+</button>
+
+<p id="error"></p>
+
+</div>
+
+
+<div id="chatBox" class="hidden">
+
+<div class="card">
+
+👤
+<span id="currentUser"></span>
+
+<button onclick="logout()">
+تسجيل خروج
+</button>
+
+</div>
+
+
+<div id="messages">
+جارِ تحميل الرسائل...
+</div>
+
+
+<div class="send">
+
+<input
+id="messageInput"
+maxlength="500"
+placeholder="اكتب رسالتك..."
+onkeydown="if(event.key==='Enter')sendMessage()"
+>
+
+<button onclick="sendMessage()">
+إرسال
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const USERS_FILE = "users.json";
+const MESSAGES_FILE = "messages.json";
+
+let users = [];
+let messages = [];
+
+let currentUser =
+localStorage.getItem("mslim_current_user");
+
+
+async function sha256(text){
+
+    const data =
+        new TextEncoder().encode(text);
+
+    const hash =
+        await crypto.subtle.digest(
+            "SHA-256",
+            data
+        );
+
+    return Array.from(
+        new Uint8Array(hash)
+    )
+    .map(
+        b => b.toString(16).padStart(2,"0")
+    )
+    .join("");
+
+}
+
+
+async function loadUsers(){
+
+    try{
+
+        const response =
+            await fetch(
+                USERS_FILE + "?t=" + Date.now()
+            );
+
+        if(!response.ok)
+            throw new Error();
+
+        users = await response.json();
+
+    }catch{
+
+        users = [];
+
+    }
+
+}
+
+
+async function loadMessages(){
+
+    try{
+
+        const response =
+            await fetch(
+                MESSAGES_FILE + "?t=" + Date.now()
+            );
+
+        if(!response.ok)
+            throw new Error();
+
+        messages = await response.json();
+
+    }catch{
+
+        messages = [];
+
+    }
+
+    displayMessages();
+
+}
+
+
+async function register(){
+
+    const username =
+        document.getElementById("username")
+        .value.trim();
+
+    const age =
+        document.getElementById("age")
+        .value;
+
+    const gender =
+        document.getElementById("gender")
+        .value;
+
+    const error =
+        document.getElementById("error");
+
+    error.textContent = "";
+
+    if(!username || !age || !gender){
+
+        error.textContent =
+            "❌ أكمل جميع البيانات.";
+
+        return;
+
+    }
+
+
+    if(username.length < 2 ||
+       username.length > 20){
+
+        error.textContent =
+            "❌ الاسم يجب أن يكون بين 2 و20 حرف.";
+
+        return;
+
+    }
+
+
+    if(username.toLowerCase() === "mslim"){
+
+        error.textContent =
+            "❌ هذا الاسم محجوز للأدمن.";
+
+        return;
+
+    }
+
+
+    await loadUsers();
+
+    const id =
+        await sha256(
+            username.toLowerCase()
+        );
+
+
+    const exists =
+        users.some(
+            user => user.id === id
+        );
+
+
+    if(exists){
+
+        error.textContent =
+            "❌ هذا الاسم مستخدم بالفعل.";
+
+        return;
+
+    }
+
+
+    const user = {
+
+        id:id,
+
+        name:username,
+
+        age:Number(age),
+
+        gender:gender
+
+    };
+
+
+    localStorage.setItem(
+        "mslim_local_user",
+        JSON.stringify(user)
+    );
+
+    localStorage.setItem(
+        "mslim_current_user",
+        username
+    );
+
+
+    currentUser = username;
+
+    openChat();
+
+}
+
+
+function openChat(){
+
+    document
+        .getElementById("registerBox")
+        .classList.add("hidden");
+
+    document
+        .getElementById("chatBox")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("currentUser")
+        .textContent = currentUser;
+
+    loadMessages();
+
+}
+
+
+function displayMessages(){
+
+    const box =
+        document.getElementById("messages");
+
+    box.innerHTML = "";
+
+    if(!messages.length){
+
+        box.innerHTML =
+            "<p>لا توجد رسائل بعد.</p>";
+
+        return;
+
+    }
+
+
+    messages.forEach(message => {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "message";
+
+
+        const name =
+            document.createElement("div");
+
+        name.className =
+            message.name === "MSLIM"
+            ? "message-admin"
+            : "message-name";
+
+        name.textContent =
+            message.name;
+
+
+        const text =
+            document.createElement("div");
+
+        text.textContent =
+            message.text;
+
+
+        const time =
+            document.createElement("small");
+
+        time.className =
+            "message-time";
+
+        time.textContent =
+            message.time || "";
+
+
+        div.appendChild(name);
+        div.appendChild(text);
+        div.appendChild(time);
+
+        box.appendChild(div);
+
+    });
+
+
+    box.scrollTop =
+        box.scrollHeight;
+
+}
+
+
+function sendMessage(){
+
+    const input =
+        document.getElementById(
+            "messageInput"
+        );
+
+    const text =
+        input.value.trim();
+
+
+    if(!text)
+        return;
+
+
+    messages.push({
+
+        name:currentUser,
+
+        text:text,
+
+        time:new Date()
+            .toLocaleTimeString(
+                "ar-IQ",
+                {
+                    hour:"2-digit",
+                    minute:"2-digit"
+                }
+            )
+
+    });
+
+
+    displayMessages();
+
+    input.value = "";
+
+}
+
+
+function logout(){
+
+    localStorage.removeItem(
+        "mslim_current_user"
+    );
+
+    localStorage.removeItem(
+        "mslim_local_user"
+    );
+
+    location.reload();
+
+}
+
+
+async function start(){
+
+    await loadUsers();
+
+    if(currentUser){
+
+        openChat();
+
+    }
+
+}
+
+
+start();
+
+setInterval(
+    loadMessages,
+    5000
+);
+
+</script>
+
+</body>
+</html>
