@@ -1,9 +1,1 @@
-[
-  {
-    "id": "100001",
-    "username": "asdfgh",
-    "password": "8588310a98676af6e22563c1559e1ae20f85950792bdcd0c8f334867c54581cd",
-    "role": "user",
-    "created_at": 1789934316
-  }
-]
+[{"id":"100001","username":"asdfgh","password":"8588310a98676af6e22563c1559e1ae20f85950792bdcd0c8f334867c54581cd","role":"user","created_at":1789934316},{"id":100002,"username":"MSLIM","password":"d2bab0241c9092fbcbf023ba0bcd3288cfd4d60473d0d6f47c6bc22b8d259b4e","role":"Admin","created":1789934789}]
