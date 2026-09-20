@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>MSLIM Chat</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+    margin:0;
+    padding:0;
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    background:
+        radial-gradient(
+            circle at top right,
+            #10253d 0,
+            #080b12 42%,
+            #05070b 100%
+        );
+
+    color:#fff;
+
+    font-family:
+        Arial,
+        sans-serif;
+
+    min-height:100vh;
+}
+
+button,
+input,
+select{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.hidden{
+    display:none !important;
+}
+
+.app{
+    width:100%;
+    max-width:760px;
+    min-height:100vh;
+    margin:auto;
+    position:relative;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(12,18,29,.96),
+            rgba(5,8,13,.98)
+        );
+
+    box-shadow:
+        0 0 60px rgba(0,170,255,.08);
+}
+
+.header{
+    position:sticky;
+    top:0;
+    z-index:20;
+
+    padding:16px 18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    background:
+        rgba(10,16,25,.92);
+
+    backdrop-filter:
+        blur(18px);
+
+    border-bottom:
+        1px solid rgba(255,255,255,.07);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:11px;
+}
+
+.logo{
+    width:43px;
+    height:43px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #00aaff,
+            #006eff
+        );
+
+    color:#00111c;
+
+    font-weight:900;
+    font-size:18px;
+
+    box-shadow:
+        0 8px 25px rgba(0,170,255,.25);
+}
+
+.brand-title{
+    font-size:19px;
+    font-weight:900;
+}
+
+.brand-sub{
+    color:#78879b;
+    font-size:11px;
+    margin-top:3px;
+}
+
+.owner-top{
+    color:#ffd84d;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.login-wrap{
+    padding:35px 20px;
+}
+
+.login-card{
+    padding:26px 20px;
+
+    border-radius:24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(19,29,43,.98),
+            rgba(10,15,24,.98)
+        );
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.35);
+}
+
+.login-title{
+    margin:0 0 7px;
+    font-size:27px;
+}
+
+.login-desc{
+    color:#8290a3;
+    font-size:13px;
+    margin-bottom:25px;
+}
+
+.tabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+}
+
+.tab{
+    flex:1;
+    padding:10px;
+    text-align:center;
+    border-radius:11px;
+    background:#101b28;
+    border:1px solid #273548;
+    color:#8290a3;
+    font-weight:bold;
+    font-size:13px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.tab.active{
+    background:linear-gradient(135deg,#00b7ff,#0077ff);
+    color:#00101a;
+    border-color:transparent;
+}
+
+.field{
+    margin-top:14px;
+}
+
+.field label{
+    display:block;
+    margin-bottom:7px;
+    color:#9aa8ba;
+    font-size:12px;
+}
+
+input,
+select{
+    width:100%;
+
+    border:1px solid #273548;
+
+    outline:none;
+
+    background:#111b29;
+
+    color:white;
+
+    padding:14px;
+
+    border-radius:13px;
+
+    font-size:15px;
+
+    transition:.2s;
+}
+
+input:focus,
+select:focus{
+    border-color:#00aaff;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(0,170,255,.10);
+}
+
+.main-btn{
+    width:100%;
+
+    border:0;
+
+    padding:14px;
+
+    margin-top:20px;
+
+    border-radius:13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #00b7ff,
+            #0077ff
+        );
+
+    color:#00101a;
+
+    font-weight:900;
+
+    font-size:15px;
+
+    box-shadow:
+        0 10px 25px
+        rgba(0,145,255,.20);
+}
+
+.main-btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+#error{
+    color:#ff5d6c;
+    font-size:13px;
+    min-height:20px;
+    margin-top:12px;
+}
+
+.user-bar{
+    margin:14px;
+
+    padding:13px 15px;
+
+    border-radius:17px;
+
+    background:#101a28;
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+}
+
+.user-info{
+    min-width:0;
+}
+
+.user-name{
+    font-weight:900;
+    color:white;
+}
+
+.user-id{
+    color:#66768c;
+    font-size:10px;
+    margin-top:4px;
+
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.role{
+    display:inline-block;
+
+    margin-right:7px;
+
+    padding:4px 7px;
+
+    border-radius:7px;
+
+    font-size:10px;
+
+    font-weight:bold;
+}
+
+.role-owner{
+    color:#171100;
+    background:#ffd84d;
+}
+
+.role-user{
+    color:#00131c;
+    background:#00aaff;
+}
+
+.logout-btn{
+    border:0;
+    padding:9px 13px;
+    border-radius:10px;
+    background:#2a1517;
+    color:#ff5d6c;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.chat{
+    padding:
+        5px 14px 105px;
+}
+
+.empty{
+    text-align:center;
+    color:#65758a;
+    padding:60px 20px;
+}
+
+.message{
+    margin-bottom:15px;
+
+    animation:
+        messageIn .2s ease;
+}
+
+@keyframes messageIn{
+    from{
+        opacity:0;
+        transform:translateY(5px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.message-meta{
+    display:flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    margin:0 8px 6px;
+
+    flex-wrap:wrap;
+}
+
+.sender{
+    color:#00b7ff;
+    font-weight:900;
+    font-size:13px;
+}
+
+.sender.owner{
+    color:#ffd84d;
+}
+
+.badge{
+    padding:3px 7px;
+
+    border-radius:6px;
+
+    font-size:9px;
+
+    font-weight:bold;
+}
+
+.badge-owner{
+    background:
+        rgba(255,216,77,.15);
+
+    color:#ffd84d;
+
+    border:
+        1px solid
+        rgba(255,216,77,.2);
+}
+
+.badge-user{
+    background:
+        rgba(0,170,255,.12);
+
+    color:#00b7ff;
+
+    border:
+        1px solid
+        rgba(0,170,255,.18);
+}
+
+.sender-id{
+    color:#56667b;
+    font-size:9px;
+}
+
+.bubble{
+    display:inline-block;
+
+    max-width:88%;
+
+    padding:12px 15px;
+
+    border-radius:
+        6px 17px 17px 17px;
+
+    background:#121e2d;
+
+    border:
+        1px solid
+        rgba(255,255,255,.05);
+
+    color:#eaf1f8;
+
+    line-height:1.55;
+
+    word-break:break-word;
+}
+
+.message.owner-message .bubble{
+    background:
+        linear-gradient(
+            135deg,
+            #17283a,
+            #102031
+        );
+
+    border-color:
+        rgba(255,216,77,.13);
+}
+
+.message-time{
+    color:#536276;
+    font-size:9px;
+    margin-right:8px;
+    margin-top:4px;
+}
+
+.owner-panel{
+    margin:14px;
+
+    padding:17px;
+
+    border-radius:19px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #211d12,
+            #12140f
+        );
+
+    border:
+        1px solid
+        rgba(255,216,77,.13);
+}
+
+.owner-title{
+    color:#ffd84d;
+    font-weight:900;
+    margin-bottom:12px;
+}
+
+.owner-panel input{
+    margin-top:0;
+}
+
+.kick-btn{
+    width:100%;
+
+    margin-top:9px;
+
+    padding:12px;
+
+    border:0;
+
+    border-radius:11px;
+
+    background:#8d2731;
+
+    color:white;
+
+    font-weight:bold;
+}
+
+.owner-result{
+    font-size:11px;
+    margin-top:9px;
+    color:#9ba7b7;
+}
+
+.send-area{
+    position:fixed;
+
+    bottom:0;
+
+    width:100%;
+
+    max-width:760px;
+
+    padding:10px 12px;
+
+    background:
+        rgba(7,12,19,.93);
+
+    backdrop-filter:
+        blur(18px);
+
+    border-top:
+        1px solid
+        rgba(255,255,255,.07);
+
+    display:flex;
+
+    gap:8px;
+
+    z-index:30;
+}
+
+.send-input{
+    margin:0;
+
+    flex:1;
+
+    min-width:0;
+
+    border-radius:14px;
+}
+
+.send-btn{
+    width:58px;
+
+    margin:0;
+
+    border:0;
+
+    border-radius:14px;
+
+    background:#00aaff;
+
+    color:#00101a;
+
+    font-size:20px;
+
+    font-weight:bold;
+}
+
+@media(max-width:500px){
+
+    .header{
+        padding:13px;
+    }
+
+    .login-wrap{
+        padding:20px 13px;
+    }
+
+    .login-card{
+        border-radius:20px;
+    }
+
+    .chat{
+        padding-left:9px;
+        padding-right:9px;
+    }
+
+    .bubble{
+        max-width:94%;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+<header class="header">
+
+<div class="brand">
+
+<div class="logo">
+M
+</div>
+
+<div>
+
+<div class="brand-title">
+MSLIM Chat
+</div>
+
+<div class="brand-sub">
+مجتمع الدردشة
+</div>
+
+</div>
+
+</div>
+
+
+<div class="owner-top">
+👑 المالك: MSLIM
+</div>
+
+</header>
+
+
+
+<div id="registerBox" class="login-wrap">
+
+<div class="login-card">
+
+<div class="tabs">
+
+<div
+id="tabLogin"
+class="tab"
+onclick="switchTab('login')"
+>
+تسجيل الدخول
+</div>
+
+<div
+id="tabRegister"
+class="tab active"
+onclick="switchTab('register')"
+>
+حساب جديد
+</div>
+
+</div>
+
+
+<h1
+id="formTitle"
+class="login-title"
+>
+مرحباً بك
+</h1>
+
+<div
+id="formDesc"
+class="login-desc"
+>
+أنشئ حسابك للدخول إلى الكروب
+</div>
+
+
+<div class="field">
+
+<label>
+اسم المستخدم
+</label>
+
+<input
+id="username"
+type="text"
+maxlength="20"
+placeholder="اكتب اليوزر"
+autocomplete="off"
+>
+
+</div>
+
+
+<div id="ageField" class="field">
+
+<label>
+العمر
+</label>
+
+<input
+id="age"
+type="number"
+min="1"
+max="120"
+placeholder="العمر"
+>
+
+</div>
+
+
+<div id="genderField" class="field">
+
+<label>
+الجنس
+</label>
+
+<select id="gender">
+
+<option value="">
+اختر الجنس
+</option>
+
+<option value="ذكر">
+ذكر
+</option>
+
+<option value="أنثى">
+أنثى
+</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>
+كلمة المرور
+</label>
+
+<input
+id="password"
+type="password"
+placeholder="كلمة المرور"
+autocomplete="off"
+>
+
+</div>
+
+
+<button
+id="mainBtn"
+class="main-btn"
+onclick="submitForm()"
+>
+دخول إلى الكروب
+</button>
+
+
+<p id="error"></p>
+
+</div>
+
+</div>
+
+
+
+<div id="chatBox" class="hidden">
+
+
+<div class="user-bar">
+
+<div class="user-info">
+
+<div class="user-name">
+<span id="currentUser"></span>
+
+<span
+id="roleBadge"
+class="role"
+></span>
+
+</div>
+
+<div
+class="user-id"
+id="currentUserId"
+></div>
+
+</div>
+
+<button
+class="logout-btn"
+onclick="logout()"
+>
+خروج
+</button>
+
+</div>
+
+
+
+<div
+id="ownerPanel"
+class="owner-panel hidden"
+>
+
+<div class="owner-title">
+👑 صلاحيات المالك
+</div>
+
+<input
+id="kickTarget"
+type="text"
+placeholder="أدخل اسم أو ID العضو"
+autocomplete="off"
+>
+
+<button
+class="kick-btn"
+onclick="kickUser()"
+>
+🚫 طرد العضو
+</button>
+
+<div
+id="ownerResult"
+class="owner-result"
+></div>
+
+</div>
+
+
+
+<div
+id="messages"
+class="chat"
+>
+
+<div class="empty">
+جارِ تحميل الرسائل...
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<div
+id="sendArea"
+class="send-area hidden"
+>
+
+<input
+id="messageInput"
+class="send-input"
+maxlength="500"
+placeholder="اكتب رسالتك..."
+onkeydown="
+if(event.key==='Enter'){
+sendMessage();
+}
+"
+>
+
+<button
+class="send-btn"
+onclick="sendMessage()"
+>
+➤
+</button>
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+/* ========================================================
+   Config
+======================================================== */
+
+const GITHUB_OWNER = "MSLIM-png";
+const GITHUB_REPO = "MSLIM-png";
+const GITHUB_BRANCH = "main";
+
+const API = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents`;
+
+/*
+   ملاحظة أمنية:
+   لتفعيل المزامنة الحقيقية بين الأجهزة،
+   ضع هنا GitHub Token بصلاحية repo.
+   بدون Token، سيستعمل الموقع localStorage فقط.
+*/
+
+const GITHUB_TOKEN = "";
+
+const API_HEADERS = GITHUB_TOKEN
+    ? {
+        "Authorization": "Bearer " + GITHUB_TOKEN,
+        "Accept": "application/vnd.github+json"
+    }
+    : {
+        "Accept": "application/vnd.github+json"
+    };
+
+
+/* ========================================================
+   Keys
+======================================================== */
+
+const USERS_KEY = "mslim_users";
+const MESSAGES_KEY = "mslim_messages";
+const CURRENT_KEY = "mslim_current_user";
+const SESSION_KEY = "mslim_session";
+
+
+let users = [];
+let messages = [];
+let currentUserData = null;
+let authMode = "register";
+
+
+/* ========================================================
+   Storage helpers
+======================================================== */
+
+function loadLocal(){
+
+    users = JSON.parse(
+        localStorage.getItem(USERS_KEY) || "[]"
+    );
+
+    messages = JSON.parse(
+        localStorage.getItem(MESSAGES_KEY) || "[]"
+    );
+
+}
+
+
+function saveLocalUsers(){
+
+    localStorage.setItem(
+        USERS_KEY,
+        JSON.stringify(users)
+    );
+
+}
+
+
+function saveLocalMessages(){
+
+    localStorage.setItem(
+        MESSAGES_KEY,
+        JSON.stringify(messages)
+    );
+
+}
+
+
+/* ========================================================
+   GitHub read / write
+======================================================== */
+
+async function githubRead(filename){
+
+    if(!GITHUB_TOKEN){
+        return null;
+    }
+
+    try{
+
+        const res = await fetch(
+            `${API}/${filename}?ref=${GITHUB_BRANCH}`,
+            { headers: API_HEADERS }
+        );
+
+        if(!res.ok){
+            return null;
+        }
+
+        const data = await res.json();
+
+        const decoded =
+            atob(
+                data.content.replace(/\n/g,"")
+            );
+
+        const text =
+            decodeURIComponent(
+                escape(decoded)
+            );
+
+        return {
+            sha: data.sha,
+            data: JSON.parse(text || "[]")
+        };
+
+    }catch(e){
+        console.warn("GitHub read error", e);
+        return null;
+    }
+
+}
+
+
+async function githubWrite(filename, jsonData, sha){
+
+    if(!GITHUB_TOKEN){
+        return false;
+    }
+
+    try{
+
+        const text = JSON.stringify(jsonData, null, 2);
+
+        const encoded =
+            btoa(
+                unescape(
+                    encodeURIComponent(text)
+                )
+            );
+
+        const body = {
+            message: `Update ${filename}`,
+            content: encoded,
+            branch: GITHUB_BRANCH
+        };
+
+        if(sha){
+            body.sha = sha;
+        }
+
+        const res = await fetch(
+            `${API}/${filename}`,
+            {
+                method: "PUT",
+                headers: {
+                    ...API_HEADERS,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            }
+        );
+
+        if(!res.ok){
+            console.warn("GitHub write failed", await res.text());
+            return false;
+        }
+
+        return true;
+
+    }catch(e){
+        console.warn("GitHub write error", e);
+        return false;
+    }
+
+}
+
+
+let usersSha = null;
+let messagesSha = null;
+
+
+async function syncUsers(){
+
+    const remote = await githubRead("users.json");
+
+    if(remote){
+
+        usersSha = remote.sha;
+
+        // دمج: أخذ الاتحاد بدون تكرار
+        const map = new Map();
+
+        [...users, ...remote.data].forEach(u => {
+            if(u && u.name){
+                map.set(
+                    u.name.toLowerCase(),
+                    u
+                );
+            }
+        });
+
+        users = Array.from(map.values());
+
+        saveLocalUsers();
+
+    }
+
+}
+
+
+async function syncMessages(){
+
+    const remote = await githubRead("messages.json");
+
+    if(remote){
+
+        messagesSha = remote.sha;
+
+        const map = new Map();
+
+        [...messages, ...remote.data].forEach(m => {
+
+            if(!m) return;
+
+            const key =
+                (m.id||"") + "|" +
+                (m.time||"") + "|" +
+                (m.text||"");
+
+            map.set(key, m);
+
+        });
+
+        messages = Array.from(map.values());
+
+        saveLocalMessages();
+
+    }
+
+}
+
+
+async function pushUsers(){
+
+    saveLocalUsers();
+
+    if(GITHUB_TOKEN){
+
+        const ok = await githubWrite(
+            "users.json",
+            users,
+            usersSha
+        );
+
+        if(ok){
+            const r = await githubRead("users.json");
+            if(r) usersSha = r.sha;
+        }
+
+    }
+
+}
+
+
+async function pushMessages(){
+
+    saveLocalMessages();
+
+    if(GITHUB_TOKEN){
+
+        const ok = await githubWrite(
+            "messages.json",
+            messages,
+            messagesSha
+        );
+
+        if(ok){
+            const r = await githubRead("messages.json");
+            if(r) messagesSha = r.sha;
+        }
+
+    }
+
+}
+
+
+/* ========================================================
+   SHA-256
+======================================================== */
+
+async function sha256(text){
+
+    const data =
+        new TextEncoder().encode(text);
+
+    const hash =
+        await crypto.subtle.digest(
+            "SHA-256",
+            data
+        );
+
+    return Array
+        .from(new Uint8Array(hash))
+        .map(
+            b =>
+                b.toString(16)
+                .padStart(2,"0")
+        )
+        .join("");
+
+}
+
+
+/* ========================================================
+   Tabs
+======================================================== */
+
+function switchTab(mode){
+
+    authMode = mode;
+
+    document
+        .getElementById("tabLogin")
+        .classList.toggle("active", mode === "login");
+
+    document
+        .getElementById("tabRegister")
+        .classList.toggle("active", mode === "register");
+
+    document
+        .getElementById("formTitle")
+        .textContent =
+            mode === "login"
+            ? "تسجيل الدخول"
+            : "مرحباً بك";
+
+    document
+        .getElementById("formDesc")
+        .textContent =
+            mode === "login"
+            ? "أدخل بياناتك للدخول"
+            : "أنشئ حسابك للدخول إلى الكروب";
+
+    document
+        .getElementById("ageField")
+        .classList.toggle("hidden", mode === "login");
+
+    document
+        .getElementById("genderField")
+        .classList.toggle("hidden", mode === "login");
+
+    document
+        .getElementById("mainBtn")
+        .textContent =
+            mode === "login"
+            ? "دخول"
+            : "إنشاء الحساب";
+
+    document
+        .getElementById("error")
+        .textContent = "";
+
+}
+
+
+/* ========================================================
+   Register
+======================================================== */
+
+async function register(){
+
+    const input =
+        document.getElementById("username");
+
+    const ageInput =
+        document.getElementById("age");
+
+    const genderInput =
+        document.getElementById("gender");
+
+    const passInput =
+        document.getElementById("password");
+
+    const error =
+        document.getElementById("error");
+
+
+    error.textContent = "";
+
+
+    const username = input.value.trim();
+    const age = ageInput.value;
+    const gender = genderInput.value;
+    const password = passInput.value;
+
+
+    if(!username || !age || !gender || !password){
+
+        error.textContent =
+            "❌ أكمل جميع البيانات.";
+
+        return;
+
+    }
+
+
+    if(username.length < 2 || username.length > 20){
+
+        error.textContent =
+            "❌ اليوزر يجب أن يكون بين 2 و20 حرف.";
+
+        return;
+
+    }
+
+
+    if(password.length < 4){
+
+        error.textContent =
+            "❌ كلمة المرور 4 أحرف على الأقل.";
+
+        return;
+
+    }
+
+
+    const normalized = username.toLowerCase();
+
+
+    // منع تكرار اليوزر
+    const exists =
+        users.some(
+            u =>
+                u.name &&
+                u.name.toLowerCase() === normalized
+        );
+
+
+    if(exists){
+
+        error.textContent =
+            "❌ هذا اليوزر مستخدم بالفعل.";
+
+        return;
+
+    }
+
+
+    const id = await sha256(normalized);
+    const passHash = await sha256(password);
+
+
+    // المالك
+    if(normalized === "mslim"){
+
+        const ownerExists =
+            users.some(
+                u =>
+                    u.name &&
+                    u.name.toLowerCase() === "mslim"
+            );
+
+        if(ownerExists){
+
+            error.textContent =
+                "❌ هذا اليوزر محجوز للمالك.";
+
+            return;
+
+        }
+
+        const admin = {
+            id,
+            name: "MSLIM",
+            age: Number(age),
+            gender,
+            pass: passHash,
+            role: "owner"
+        };
+
+        users.push(admin);
+
+        await pushUsers();
+
+        currentUserData = admin;
+
+        localStorage.setItem(
+            SESSION_KEY,
+            JSON.stringify({
+                name: admin.name,
+                id: admin.id
+            })
+        );
+
+        openChat();
+
+        return;
+
+    }
+
+
+    const user = {
+        id,
+        name: username,
+        age: Number(age),
+        gender,
+        pass: passHash,
+        role: "user"
+    };
+
+    users.push(user);
+
+    await pushUsers();
+
+    currentUserData = user;
+
+    localStorage.setItem(
+        SESSION_KEY,
+        JSON.stringify({
+            name: user.name,
+            id: user.id
+        })
+    );
+
+    openChat();
+
+}
+
+
+/* ========================================================
+   Login
+======================================================== */
+
+async function login(){
+
+    const input =
+        document.getElementById("username");
+
+    const passInput =
+        document.getElementById("password");
+
+    const error =
+        document.getElementById("error");
+
+
+    error.textContent = "";
+
+
+    const username = input.value.trim();
+    const password = passInput.value;
+
+
+    if(!username || !password){
+
+        error.textContent =
+            "❌ أدخل اليوزر وكلمة المرور.";
+
+        return;
+
+    }
+
+
+    const normalized = username.toLowerCase();
+
+
+    const user =
+        users.find(
+            u =>
+                u.name &&
+                u.name.toLowerCase() === normalized
+        );
+
+
+    if(!user){
+
+        error.textContent =
+            "❌ الحساب غير موجود.";
+
+        return;
+
+    }
+
+
+    const passHash = await sha256(password);
+
+
+    if(user.pass && user.pass !== passHash){
+
+        error.textContent =
+            "❌ كلمة المرور خاطئة.";
+
+        return;
+
+    }
+
+
+    currentUserData = user;
+
+    localStorage.setItem(
+        SESSION_KEY,
+        JSON.stringify({
+            name: user.name,
+            id: user.id
+        })
+    );
+
+    openChat();
+
+}
+
+
+/* ========================================================
+   Submit
+======================================================== */
+
+function submitForm(){
+
+    if(authMode === "login"){
+        login();
+    }else{
+        register();
+    }
+
+}
+
+
+/* ========================================================
+   Logout
+======================================================== */
+
+function logout(){
+
+    currentUserData = null;
+
+    localStorage.removeItem(SESSION_KEY);
+
+    document
+        .getElementById("chatBox")
+        .classList.add("hidden");
+
+    document
+        .getElementById("sendArea")
+        .classList.add("hidden");
+
+    document
+        .getElementById("registerBox")
+        .classList.remove("hidden");
+
+    document.getElementById("password").value = "";
+
+    switchTab("login");
+
+}
+
+
+/* ========================================================
+   Open Chat
+======================================================== */
+
+async function openChat(){
+
+    document
+        .getElementById("registerBox")
+        .classList.add("hidden");
+
+    document
+        .getElementById("chatBox")
+        .classList.remove("hidden");
+
+    document
+        .getElementById("sendArea")
+        .classList.remove("hidden");
+
+
+    document
+        .getElementById("currentUser")
+        .textContent = currentUserData.name;
+
+
+    const badge =
+        document.getElementById("roleBadge");
+
+    const idElement =
+        document.getElementById("currentUserId");
+
+
+    if(currentUserData.role === "owner"){
+
+        badge.textContent = "👑 مالك";
+        badge.className = "role role-owner";
+
+        document
+            .getElementById("ownerPanel")
+            .classList.remove("hidden");
+
+    }else{
+
+        badge.textContent = "عضو";
+        badge.className = "role role-user";
+
+        document
+            .getElementById("ownerPanel")
+            .classList.add("hidden");
+
+    }
+
+
+    idElement.textContent =
+        "ID: " + currentUserData.id;
+
+
+    await syncMessages();
+
+    displayMessages();
+
+
+    // مزامنة دورية
+    setInterval(
+        async () => {
+
+            await syncMessages();
+
+            displayMessages();
+
+        },
+        10000
+    );
+
+}
+
+
+/* ========================================================
+   Display Messages
+======================================================== */
+
+function displayMessages(){
+
+    const box =
+        document.getElementById("messages");
+
+    box.innerHTML = "";
+
+
+    if(!messages.length){
+
+        box.innerHTML =
+            '<div class="empty">' +
+            'لا توجد رسائل بعد.<br>' +
+            'كن أول من يكتب 👋' +
+            '</div>';
+
+        return;
+
+    }
+
+
+    // ترتيب حسب الوقت
+    const sorted =
+        [...messages].sort(
+            (a,b) => (a.ts||0) - (b.ts||0)
+        );
+
+
+    sorted.forEach(message => {
+
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.className =
+            "message" +
+            (
+                message.role === "owner"
+                ? " owner-message"
+                : ""
+            );
+
+
+        const meta =
+            document.createElement("div");
+
+        meta.className = "message-meta";
+
+
+        const sender =
+            document.createElement("span");
+
+        sender.className =
+            "sender" +
+            (
+                message.role === "owner"
+                ? " owner"
+                : ""
+            );
+
+        sender.textContent = message.name;
+
+
+        const badge =
+            document.createElement("span");
+
+        badge.className =
+            message.role === "owner"
+            ? "badge badge-owner"
+            : "badge badge-user";
+
+        badge.textContent =
+            message.role === "owner"
+            ? "👑 مالك"
+            : "عضو";
+
+
+        const id =
+            document.createElement("span");
+
+        id.className = "sender-id";
+
+        id.textContent = "ID: " + message.id;
+
+
+        meta.appendChild(sender);
+        meta.appendChild(badge);
+        meta.appendChild(id);
+
+
+        const bubble =
+            document.createElement("div");
+
+        bubble.className = "bubble";
+        bubble.textContent = message.text;
+
+
+        const time =
+            document.createElement("div");
+
+        time.className = "message-time";
+        time.textContent = message.time;
+
+
+        wrapper.appendChild(meta);
+        wrapper.appendChild(bubble);
+        wrapper.appendChild(time);
+
+
+        box.appendChild(wrapper);
+
+    });
+
+
+    box.scrollTop = box.scrollHeight;
+
+}
+
+
+/* ========================================================
+   Send Message
+======================================================== */
+
+async function sendMessage(){
+
+    if(!currentUserData){
+        return;
+    }
+
+
+    const input =
+        document.getElementById("messageInput");
+
+    const text = input.value.trim();
+
+
+    if(!text){
+        return;
+    }
+
+
+    const now = new Date();
+
+
+    const message = {
+        id: currentUserData.id,
+        name: currentUserData.name,
+        role: currentUserData.role,
+        text: text,
+        time: now.toLocaleTimeString(
+            "ar-IQ",
+            {
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        ),
+        ts: now.getTime()
+    };
+
+
+    messages.push(message);
+
+    displayMessages();
+
+    input.value = "";
+
+
+    await pushMessages();
+
+}
+
+
+/* ========================================================
+   Kick User (Owner)
+======================================================== */
+
+async function kickUser(){
+
+    if(
+        !currentUserData ||
+        currentUserData.role !== "owner"
+    ){
+        return;
+    }
+
+
+    const input =
+        document.getElementById("kickTarget");
+
+    const result =
+        document.getElementById("ownerResult");
+
+
+    const target = input.value.trim();
+
+    result.textContent = "";
+
+
+    if(!target){
+
+        result.textContent =
+            "❌ أدخل الاسم أو ID.";
+
+        return;
+
+    }
+
+
+    const targetLower = target.toLowerCase();
+
+
+    const index =
+        users.findIndex(
+            user =>
+                (
+                    user.name &&
+                    user.name.toLowerCase() === targetLower
+                )
+                ||
+                user.id === target
+        );
+
+
+    if(index === -1){
+
+        result.textContent =
+            "❌ العضو غير موجود.";
+
+        return;
+
+    }
+
+
+    const targetUser = users[index];
+
+
+    if(targetUser.role === "owner"){
+
+        result.textContent =
+            "❌ لا يمكن طرد المالك.";
+
+        return;
+
+    }
+
+
+    users.splice(index, 1);
+
+    await pushUsers();
+
+
+    // حذف رسائل العضو
+    messages =
+        messages.filter(
+            message =>
+                message.id !== targetUser.id
+        );
+
+
+    await pushMessages();
+
+
+    result.textContent =
+        "✅ تم طرد " + targetUser.name;
+
+
+    input.value = "";
+
+    displayMessages();
+
+}
+
+
+/* ========================================================
+   Start
+======================================================== */
+
+async function start(){
+
+    loadLocal();
+
+    // مزامنة أولية
+    await syncUsers();
+    await syncMessages();
+
+
+    // استرجاع الجلسة
+    const session =
+        localStorage.getItem(SESSION_KEY);
+
+
+    if(session){
+
+        try{
+
+            const parsed = JSON.parse(session);
+
+            const user =
+                users.find(
+                    u =>
+                        u.id === parsed.id &&
+                        u.name === parsed.name
+                );
+
+            if(user){
+
+                currentUserData = user;
+
+                await openChat();
+
+                return;
+
+            }
+
+        }catch(e){}
+
+    }
+
+
+    // لو المالك موجود مسبقاً، نروح لتسجيل الدخول
+    const ownerExists =
+        users.some(u => u.role === "owner");
+
+    if(ownerExists){
+        switchTab("login");
+    }
+
+}
+
+
+start();
+
+</script>
+
+</body>
+</html>
