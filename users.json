@@ -1,1 +1,9 @@
-{}
+[
+  {
+    "id": "100001",
+    "username": "asdfgh",
+    "password": "8588310a98676af6e22563c1559e1ae20f85950792bdcd0c8f334867c54581cd",
+    "role": "user",
+    "created_at": 1789934316
+  }
+]
