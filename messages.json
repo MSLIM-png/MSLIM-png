@@ -190,5 +190,13 @@
     "role": "user",
     "message": "try:",
     "time": 1790011026
+  },
+  {
+    "message_id": "ad89b5b1",
+    "user_id": "100005",
+    "username": "yamn506",
+    "role": "user",
+    "message": "__import__(mod)",
+    "time": 1790011029
   }
 ]
