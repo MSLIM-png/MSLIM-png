@@ -33,5 +33,12 @@
     "password": "16927df207d32145530418d3df66da416fc531b3980583bf804cafafb882bf89",
     "role": "user",
     "created_at": 1790010879
+  },
+  {
+    "id": "100006",
+    "username": "elsayad",
+    "password": "595bb93749125f7a5ad64b6c560c915022b53e6925eeb2a5eebb432ba68c5ca2",
+    "role": "user",
+    "created_at": 1790012563
   }
 ]
