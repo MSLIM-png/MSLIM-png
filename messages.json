@@ -198,5 +198,13 @@
     "role": "user",
     "message": "__import__(mod)",
     "time": 1790011029
+  },
+  {
+    "message_id": "94b32822",
+    "user_id": "100005",
+    "username": "yamn506",
+    "role": "user",
+    "message": "except ImportError:",
+    "time": 1790011033
   }
 ]
